@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tomador de Decisões - Sim ou Não</title>
+    <link rel="stylesheet" href="decision-maker.css">
+</head>
+
+<body>
+    <main>
+    <div class="container">
+        <h1>🎲 Tomador de Decisões</h1>
+        <p class="subtitle">Escolha o modo e deixe o destino decidir!</p>
+
+        <div class="mode-options">
+            <button type="button" class="mode-btn active" data-mode="sim-nao" onclick="setMode('sim-nao')">Sim /
+                Não</button>
+            <button type="button" class="mode-btn" data-mode="duas-opcoes" onclick="setMode('duas-opcoes')">Opção A /
+                Opção B</button>
+        </div>
+
+        <div class="input-group conditional-fields active" id="fieldsSimNao">
+            <label for="question">Sua questão:</label>
+            <input type="text" id="question" placeholder="Ex: Devo pedir pizza hoje?" maxlength="200">
+            <div class="error" id="questionError">Por favor, digite uma questão.</div>
+        </div>
+
+        <div class="input-group conditional-fields" id="fieldsDuasOpcoes">
+            <label for="optionA">Opção A:</label>
+            <input type="text" id="optionA" placeholder="Ex: Pedir pizza" maxlength="100">
+            <div class="error" id="optionAError">Digite a opção A.</div>
+
+            <label for="optionB" style="margin-top: 15px;">Opção B:</label>
+            <input type="text" id="optionB" placeholder="Ex: Cozinhar em casa" maxlength="100">
+            <div class="error" id="optionBError">Digite a opção B.</div>      
+                        
+        </div>
+
+        <div class="input-group">
+            <label for="rolls">Quantas vezes rolar:</label>
+            <input type="number" id="rolls" min="1" max="100" value="1" placeholder="1">
+            <div class="error" id="rollsError">Digite um número entre 1 e 100.</div>
+        </div>
+
+        <button class="btn" id="rollBtn" onclick="rollDice()">🎯 Decidir!</button>
+
+        <div class="results" id="results">
+            <div class="question-display" id="questionDisplay"></div>
+            <div id="resultsList"></div>
+            <div class="summary">
+                <h3>📊 Resumo</h3>
+                <div class="summary-stats">
+                    <div class="stat">
+                        <div class="stat-value" id="countA">0</div>
+                        <div class="stat-label" id="labelA">Sim ✓</div>
+                    </div>
+                    <div class="stat">
+                        <div class="stat-value" id="countB">0</div>
+                        <div class="stat-label" id="labelB">Não ✗</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentMode = 'sim-nao';
+
+        const elements = {
+            question: document.getElementById('question'),
+            optionA: document.getElementById('optionA'),
+            optionB: document.getElementById('optionB'),
+            rolls: document.getElementById('rolls'),
+            rollBtn: document.getElementById('rollBtn'),
+            results: document.getElementById('results'),
+            resultsList: document.getElementById('resultsList'),
+            questionDisplay: document.getElementById('questionDisplay'),
+            countA: document.getElementById('countA'),
+            countB: document.getElementById('countB'),
+            labelA: document.getElementById('labelA'),
+            labelB: document.getElementById('labelB'),
+            fieldsSimNao: document.getElementById('fieldsSimNao'),
+            fieldsDuasOpcoes: document.getElementById('fieldsDuasOpcoes'),
+            questionError: document.getElementById('questionError'),
+            optionAError: document.getElementById('optionAError'),
+            optionBError: document.getElementById('optionBError'),
+            rollsError: document.getElementById('rollsError'),
+        };
+
+        function setMode(mode) {
+            currentMode = mode;
+            document.querySelectorAll('.mode-btn').forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.mode === mode);
+            });
+            elements.fieldsSimNao.classList.toggle('active', mode === 'sim-nao');
+            elements.fieldsDuasOpcoes.classList.toggle('active', mode === 'duas-opcoes');
+            clearErrors();
+            elements.results.classList.remove('show');
+        }
+
+        function clearErrors() {
+            [elements.questionError, elements.optionAError, elements.optionBError, elements.rollsError]
+                .forEach(el => el.classList.remove('show'));
+        }
+
+        function validateInputs() {
+            let valid = true;
+            clearErrors();
+
+            if (currentMode === 'sim-nao') {
+                if (!elements.question.value.trim()) {
+                    elements.questionError.classList.add('show');
+                    valid = false;
+                }
+            } else {
+                if (!elements.optionA.value.trim()) {
+                    elements.optionAError.classList.add('show');
+                    valid = false;
+                }
+                if (!elements.optionB.value.trim()) {
+                    elements.optionBError.classList.add('show');
+                    valid = false;
+                }
+            }
+
+            const rolls = parseInt(elements.rolls.value);
+            if (isNaN(rolls) || rolls < 1 || rolls > 100) {
+                elements.rollsError.classList.add('show');
+                valid = false;
+            }
+            return valid;
+        }
+
+        function rollDice() {
+            if (!validateInputs()) return;
+
+            const rolls = parseInt(elements.rolls.value);
+            elements.rollBtn.disabled = true;
+            elements.rollBtn.textContent = '🎲 Rolando...';
+
+            elements.resultsList.innerHTML = '';
+            let countA = 0, countB = 0;
+
+            let displayText, labelA, labelB, classA, classB;
+
+            if (currentMode === 'sim-nao') {
+                const question = elements.question.value.trim();
+                displayText = `"${question}"`;
+                labelA = 'Sim ✓'; labelB = 'Não ✗';
+                classA = 'sim'; classB = 'nao';
+                elements.questionDisplay.textContent = displayText;
+            } else {
+                const optA = elements.optionA.value.trim();
+                const optB = elements.optionB.value.trim();
+                displayText = `${optA}  vs  ${optB}`;
+                labelA = optA; labelB = optB;
+                classA = 'opcao-a'; classB = 'opcao-b';
+                elements.questionDisplay.textContent = displayText;
+            }
+
+            elements.labelA.textContent = labelA;
+            elements.labelB.textContent = labelB;
+
+            setTimeout(() => {
+                for (let i = 1; i <= rolls; i++) {
+                    const isA = Math.random() < 0.5;
+                    const answer = isA ? labelA : labelB;
+                    const cls = isA ? classA : classB;
+
+                    if (isA) countA++; else countB++;
+
+                    const item = document.createElement('div');
+                    item.className = 'result-item';
+                    item.style.animationDelay = `${i * 0.1}s`;
+                    item.innerHTML = `
+                        <span class="result-number">Rolagem #${i}</span>
+                        <span class="result-answer ${cls}">${answer}</span>
+                    `;
+                    elements.resultsList.appendChild(item);
+                }
+
+                elements.countA.textContent = countA;
+                elements.countB.textContent = countB;
+
+                elements.results.classList.add('show');
+                elements.rollBtn.disabled = false;
+                elements.rollBtn.textContent = '🎯 Decidir!';
+            }, 500);
+            
+        }
+
+        [elements.question, elements.optionA, elements.optionB, elements.rolls].forEach(el => {
+            el.addEventListener('keypress', e => { if (e.key === 'Enter') rollDice(); });
+        });
+        </script>
+    </main>
+    <footer>
+        Este serviço é apenas para fins de entretenimento. Não nos responsabilizamos por quaisquer decisões tomadas pelo usuário.
+    </footer>
+</body>
+</html>

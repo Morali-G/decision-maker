@@ -1,12 +1,19 @@
-# Decision Maker
-    Todos nós já estivemos em dúvida, isso é fato. 
-    Este aplicativo web é uma forma simples e divertida para tomar decisões
+**#Features:**
+**Two Modes:**
 
- ## Aplicativo web para indecisos. 
-    Nele você consegue definir suas perguntas e quantas vezes quer que a dúvida seja debatida!
-### Divirta-se
-    Use esse aplicativo para tomar decisões simples. Não faça o uso para decisões importantes.  
-    
-    
-    
-    quaisquer decisões e suas consequências são de responsabilidade única e exclusiva do usuário. 
+**Sim/Não (Yes/No)**: User enters a question and gets random yes/no answers
+**Opção A/B (Option A/B)**: User enters two options and the app randomly picks between them
+**Functionality:**
+
+Users can set how many "rolls" (1-100) to perform
+Each roll generates a random result displayed with a staggered animation
+Displays a summary with counts of how many times each option was chosen
+Input validation with error messages
+Enter key support for quick submission
+UI Elements:
+
+Mode selector buttons
+Conditional input fields that show/hide based on selected mode
+Results section with individual roll outcomes
+Summary stats showing the count and percentage for each choice
+The app is purely for entertainment purposes (as noted in the footer
